@@ -6,83 +6,44 @@
     <title>পল্লীর স্বাদ - অর্ডার প্যানেল</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2d5a27;
-            --secondary: #f4a261;
-            --accent: #e76f51;
-            --bg: #fdfaf5;
-        }
-
+        :root { --primary: #2d5a27; --accent: #e76f51; --bg: #fdfaf5; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
         body { background-color: var(--bg); color: #333; padding-bottom: 100px; }
+        header { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000') center/cover; color: white; text-align: center; padding: 50px 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .category-header { background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; margin: 30px 0 20px; font-size: 1.4rem; text-align: center; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border: 1px solid #eee; display: flex; flex-direction: column; position: relative; }
 
-        header {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                        url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000') center/cover;
-            color: white; text-align: center; padding: 50px 20px;
-        }
+        /* Carousel */
+        .carousel-container { width: 100%; height: 220px; position: relative; overflow: hidden; }
+        .carousel-slide { display: flex; width: 300%; height: 100%; transition: 0.5s ease; }
+        .carousel-slide img { width: 33.333%; height: 100%; object-fit: cover; }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.4); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+        .prev-btn { left: 10px; } .next-btn { right: 10px; }
+        .nav-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
+        .dot { width: 10px; height: 10px; background: rgba(255,255,255,0.6); border-radius: 50%; cursor: pointer; border: 1px solid #777; }
+        .dot.active { background: var(--primary); border-color: white; }
 
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .card-content { padding: 15px; text-align: center; flex-grow: 1; }
+        .product-name { font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 5px; }
+        .price-select { width: 100%; padding: 5px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ddd; }
+        .price-display { color: var(--accent); font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; display: block; }
+        .btn-add { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 20px; cursor: pointer; width: 100%; font-weight: 600; }
 
-        .category-header {
-            background: var(--primary); color: white; padding: 10px 20px;
-            border-radius: 8px; margin: 30px 0 15px; font-size: 1.4rem;
-        }
-
-        .product-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 15px;
-        }
-
-        .card {
-            background: white; border-radius: 12px; padding: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center;
-            border: 1px solid #eee;
-        }
-
-        .price { color: var(--accent); font-weight: bold; margin: 10px 0; }
-
-        .btn-add {
-            background: var(--primary); color: white; border: none;
-            padding: 10px; border-radius: 5px; cursor: pointer; width: 100%;
-            font-weight: 600; transition: 0.2s;
-        }
-
-        .btn-add:active { transform: scale(0.95); }
-
-        /* Cart Sidebar */
-        .cart-panel {
-            position: fixed; top: 0; right: -100%; width: 350px; height: 100%;
-            background: white; z-index: 1001; transition: 0.4s; padding: 20px;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.1); overflow-y: auto;
-        }
-
+        /* Cart Panel */
+        .cart-panel { position: fixed; top: 0; right: -100%; width: 380px; height: 100%; background: white; z-index: 2000; transition: 0.4s; padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.1); overflow-y: auto; }
         .cart-panel.active { right: 0; }
-
-        .cart-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid #eee;
-        }
-
-        .qty-controls button {
-            padding: 2px 8px; cursor: pointer; background: #eee; border: 1px solid #ddd;
-        }
-
-        .cart-btn {
-            position: fixed; bottom: 20px; right: 20px;
-            background: var(--accent); color: white; padding: 15px 25px;
-            border-radius: 50px; cursor: pointer; font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000;
-        }
-
-        .checkout-btn {
-            background: #25D366; color: white; width: 100%; border: none;
-            padding: 15px; border-radius: 8px; margin-top: 20px; cursor: pointer;
-            font-size: 1.1rem; font-weight: bold;
-        }
-
-        .close-cart { cursor: pointer; font-size: 1.5rem; color: red; float: right; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .qty-controls { display: flex; align-items: center; gap: 10px; }
+        .qty-btn { background: #eee; border: none; width: 25px; height: 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
         
+        .checkout-form { margin-top: 20px; background: #f4f4f4; padding: 15px; border-radius: 10px; }
+        .checkout-form input, .checkout-form textarea, .checkout-form select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .payment-info { background: #fff3cd; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 10px; border: 1px solid #ffeeba; display: none; }
+
+        .cart-btn-fixed { position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white; padding: 15px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; z-index: 1500; }
+        .checkout-btn { background: #25D366; color: white; width: 100%; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
         @media (max-width: 400px) { .cart-panel { width: 100%; } }
     </style>
 </head>
@@ -90,144 +51,213 @@
 
 <header>
     <h1>🛒 পল্লীর স্বাদ</h1>
-    <p>বিশুদ্ধ ও প্রাকৃতিক খাদ্যের সমাহার</p>
+    <p>প্রাকৃতিক খাদ্য ও মিষ্টির সমাহার</p>
 </header>
 
-<div class="container" id="shop-container"></div>
+<div class="container" id="main-shop"></div>
 
-<!-- Floating Cart Button -->
-<div class="cart-btn" onclick="toggleCart()">
-    🛒 কার্ট দেখুন (<span id="cart-count">0</span>)
-</div>
+<div class="cart-btn-fixed" onclick="toggleCart()">🛒 কার্ট (<span id="cart-count">0</span>)</div>
 
-<!-- Cart Sidebar -->
 <div class="cart-panel" id="cartPanel">
-    <span class="close-cart" onclick="toggleCart()">বন্ধ করুন ✖</span>
-    <h2 style="margin-top:20px;">আপনার অর্ডার তালিকা</h2>
-    <hr><br>
-    <div id="cart-items-list"></div>
-    <div id="total-price-display" style="font-weight: bold; font-size: 1.2rem; margin-top: 20px; text-align: right;"></div>
-    <button class="checkout-btn" onclick="sendToWhatsApp()">হোয়াটসঅ্যাপে অর্ডার পাঠান</button>
+    <h2 onclick="toggleCart()" style="cursor:pointer; color:#999; margin-bottom:15px;">✖ বন্ধ করুন</h2>
+    <div id="cart-items-container">কার্ট খালি।</div>
+    <div id="cart-total" style="font-weight: bold; margin: 15px 0; color: var(--accent); font-size: 1.2rem;"></div>
+
+    <div class="checkout-form" id="checkoutForm" style="display:none;">
+        <input type="text" id="custName" placeholder="আপনার নাম">
+        <input type="text" id="custPhone" placeholder="মোবাইল নম্বর">
+        <textarea id="custAddress" rows="2" placeholder="সম্পূর্ণ ঠিকানা"></textarea>
+        
+        <select id="paymentMethod" onchange="togglePaymentUI()">
+            <option value="Cash on Delivery">Cash on Delivery</option>
+            <option value="bKash">bKash (বিকাশ)</option>
+            <option value="Nagad">Nagad (নগদ)</option>
+            <option value="Rocket">Rocket (রকেট)</option>
+        </select>
+
+        <div id="paymentDetails" class="payment-info">
+            <span id="paymentInstruction"></span><br><br>
+            <input type="text" id="senderNo" placeholder="আপনার নম্বর (যেখান থেকে পাঠিয়েছেন)">
+            <input type="text" id="trxID" placeholder="ট্রানজেকশন আইডি (TrxID)">
+        </div>
+
+        <button class="checkout-btn" onclick="sendWhatsApp()">অর্ডার কনফার্ম করুন</button>
+    </div>
 </div>
 
 <script>
-    const whatsappNumber = "8801580567606";
-    const inventory = [
-        { cat: '🍯 গুড় ও মধু', items: [
-            { id: 1, name: 'খেজুরের গুড় (পাটালি)', price: 350 },
-            { id: 2, name: 'ঝোলা গুড়', price: 350 },
-            { id: 3, name: 'আখেঁর দানাদার গুড়', price: 250 },
-            { id: 4, name: 'চকলেট গুড়', price: 700 },
-            { id: 5, name: 'ঘি (১ কেজি)', price: 1600 },
-            { id: 6, name: 'সরিষা মধু (১ কেজি)', price: 600 },
-            { id: 7, name: 'লিচু ফুলের মধু (১ কেজি)', price: 1000 },
-            { id: 8, name: 'প্রাকৃতিক মধু (১ কেজি)', price: 1600 }
-        ]},
-        { cat: '🌿 তেল ও মসলা', items: [
-            { id: 9, name: 'সরিষার তেল (১ কেজি)', price: 230 },
-            { id: 10, name: 'হলুদ গুড়া (১ কেজি)', price: 480 },
-            { id: 11, name: 'মরিচ গুড়া (১ কেজি)', price: 600 },
-            { id: 12, name: 'ধনিয়া গুড়া (১ কেজি)', price: 450 }
-        ]},
-        { cat: '🍚 চাল ও আটা', items: [
-            { id: 13, name: 'কালোজিরা পোলাও চাল', price: 180 },
-            { id: 14, name: 'লাল আটা (১ কেজি)', price: 80 }
-        ]}
+    const whatsappNo = "8801580567606";
+    const paymentNumbers = {
+        'bKash': '01580567606 (Personal)',
+        'Nagad': '01580567606 (Personal)',
+        'Rocket': '01580567606 (Personal)'
+    };
+
+    const products = [
+        {
+            cat: "🍯 গুড় ও মধু",
+            items: [
+                { id: 1, name: "খেজুরের গুড় (পাটালি)", price: 350, imgs: ["https://images.unsplash.com/photo-1621944190310-e3cca1564bd7?w=400", "https://images.unsplash.com/photo-1608323631988-8798956973e2?w=400", "https://images.unsplash.com/photo-1590057057038-04f5e088a2ed?w=400"] },
+                { id: 2, name: "ঝোলা গুড় (১ কেজি)", price: 350, imgs: ["https://images.unsplash.com/photo-1621944190310-e3cca1564bd7?w=400", "https://images.unsplash.com/photo-1608323631988-8798956973e2?w=400", "https://images.unsplash.com/photo-1590057057038-04f5e088a2ed?w=400"] },
+                { id: 3, name: "আখেঁর দানাদার গুড় (১ কেজি)", price: 250, imgs: ["https://images.unsplash.com/photo-1621944190310-e3cca1564bd7?w=400", "https://images.unsplash.com/photo-1608323631988-8798956973e2?w=400", "https://images.unsplash.com/photo-1590057057038-04f5e088a2ed?w=400"] },
+                { id: 4, name: "চকলেট গুড় (১ কেজি)", price: 700, imgs: ["https://images.unsplash.com/photo-1621944190310-e3cca1564bd7?w=400", "https://images.unsplash.com/photo-1608323631988-8798956973e2?w=400", "https://images.unsplash.com/photo-1590057057038-04f5e088a2ed?w=400"] },
+                { id: 5, name: "ঘি", variants: [{w: "১ কেজি", p: 1600}, {w: "২৫০ গ্রাম", p: 400}], imgs: ["https://images.unsplash.com/photo-1631709497146-a239ef373cf1?w=400", "https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=400", "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400"] },
+                { id: 6, name: "সরিষা মধু (১ কেজি)", price: 600, imgs: ["https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400", "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=400", "https://images.unsplash.com/photo-1471943311424-646960669fba?w=400"] },
+                { id: 7, name: "লিচু ফুলের মধু (১ কেজি)", price: 1000, imgs: ["https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400", "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=400", "https://images.unsplash.com/photo-1471943311424-646960669fba?w=400"] },
+                { id: 8, name: "প্রাকৃতিক ফুলের মধু (১ কেজি)", price: 1600, imgs: ["https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400", "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=400", "https://images.unsplash.com/photo-1471943311424-646960669fba?w=400"] }
+            ]
+        },
+        {
+            cat: "🌿 তেল ও মসলা",
+            items: [
+                { id: 9, name: "সরিষার তেল (১ কেজি)", price: 230, imgs: ["https://images.unsplash.com/photo-1474979266404-7eaacabc88c5?w=400", "https://images.unsplash.com/photo-1606913084603-3e7702b0ee59?w=400", "https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400"] },
+                { id: 10, name: "হলুদ গুড়া", variants: [{w: "১ কেজি", p: 480}, {w: "২৫০ গ্রাম", p: 120}], imgs: ["https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400", "https://images.unsplash.com/photo-1532336414038-cf19250c5757?w=400", "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400"] },
+                { id: 11, name: "মরিচ গুড়া", variants: [{w: "১ কেজি", p: 600}, {w: "২৫০ গ্রাম", p: 150}], imgs: ["https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400", "https://images.unsplash.com/photo-1532336414038-cf19250c5757?w=400", "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400"] },
+                { id: 12, name: "ধনিয়া গুড়া", variants: [{w: "১ কেজি", p: 450}, {w: "২৫০ গ্রাম", p: 112}], imgs: ["https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400", "https://images.unsplash.com/photo-1532336414038-cf19250c5757?w=400", "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400"] }
+            ]
+        },
+        {
+            cat: "🍚 চাল ও আটা",
+            items: [
+                { id: 13, name: "কালোজিরা পোলাও চাল (১ কেজি)", price: 180, imgs: ["https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400", "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=400", "https://images.unsplash.com/photo-1626071466175-790901e974ef?w=400"] },
+                { id: 14, name: "লাল আটা (১ কেজি)", price: 80, imgs: ["https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400", "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=400", "https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400"] }
+            ]
+        }
     ];
 
     let cart = [];
+    let currentSlideIndices = {};
 
-    function renderShop() {
-        const container = document.getElementById('shop-container');
-        inventory.forEach(section => {
-            let sectionHtml = `<div class="category-header">${section.cat}</div><div class="product-grid">`;
-            section.items.forEach(item => {
-                sectionHtml += `
-                    <div class="card">
-                        <h3>${item.name}</h3>
-                        <p class="price">${item.price} টাকা</p>
-                        <button class="btn-add" onclick="addToCart(${item.id}, '${item.name}', ${item.price})">কার্টে যোগ করুন</button>
-                    </div>`;
-            });
-            sectionHtml += `</div>`;
-            container.innerHTML += sectionHtml;
-        });
-    }
+    function init() {
+        const shop = document.getElementById('main-shop');
+        products.forEach((group) => {
+            let html = `<div class="category-header">${group.cat}</div><div class="product-grid">`;
+            group.items.forEach(item => {
+                currentSlideIndices[item.id] = 0;
+                let priceHtml = item.variants ? 
+                    `<select class="price-select" id="sel-${item.id}" onchange="updatePriceDisp(${item.id})">${item.variants.map(v=>`<option value="${v.p}">${v.w} - ${v.p} ৳</option>`).join('')}</select><span class="price-display" id="pr-${item.id}">${item.variants[0].p} ৳</span>` : 
+                    `<span class="price-display">${item.price} ৳</span>`;
 
-    function addToCart(id, name, price) {
-        const existingItem = cart.find(i => i.id === id);
-        if (existingItem) {
-            existingItem.qty++;
-        } else {
-            cart.push({ id, name, price, qty: 1 });
-        }
-        updateCartUI();
-    }
-
-    function changeQty(id, delta) {
-        const item = cart.find(i => i.id === id);
-        if (item) {
-            item.qty += delta;
-            if (item.qty <= 0) {
-                cart = cart.filter(i => i.id !== id);
-            }
-        }
-        updateCartUI();
-    }
-
-    function updateCartUI() {
-        const list = document.getElementById('cart-items-list');
-        const count = document.getElementById('cart-count');
-        const totalDisplay = document.getElementById('total-price-display');
-        
-        list.innerHTML = cart.length === 0 ? "কার্ট খালি" : "";
-        let total = 0;
-        let itemCount = 0;
-
-        cart.forEach(item => {
-            total += item.price * item.qty;
-            itemCount += item.qty;
-            list.innerHTML += `
-                <div class="cart-item">
-                    <div>
-                        <strong>${item.name}</strong><br>
-                        ${item.price} x ${item.qty} = ${item.price * item.qty} ৳
+                html += `<div class="card">
+                    <div class="carousel-container">
+                        <button class="nav-btn prev-btn" onclick="changeSlide(${item.id}, -1)">❮</button>
+                        <div class="carousel-slide" id="slide-${item.id}"><img src="${item.imgs[0]}"><img src="${item.imgs[1]}"><img src="${item.imgs[2]}"></div>
+                        <button class="nav-btn next-btn" onclick="changeSlide(${item.id}, 1)">❯</button>
+                        <div class="nav-dots" id="dots-${item.id}"><span class="dot active" onclick="setSlide(${item.id}, 0)"></span><span class="dot" onclick="setSlide(${item.id}, 1)"></span><span class="dot" onclick="setSlide(${item.id}, 2)"></span></div>
                     </div>
-                    <div class="qty-controls">
-                        <button onclick="changeQty(${item.id}, -1)">-</button>
-                        <button onclick="changeQty(${item.id}, 1)">+</button>
+                    <div class="card-content">
+                        <h3 class="product-name">${item.name}</h3>
+                        ${priceHtml}
+                        <button class="btn-add" onclick="handleAddToCart(${item.id})">অ্যাড টু কার্ট</button>
                     </div>
                 </div>`;
+            });
+            html += `</div>`;
+            shop.innerHTML += html;
         });
-
-        count.innerText = itemCount;
-        totalDisplay.innerText = cart.length > 0 ? `সর্বমোট: ${total} টাকা` : "";
     }
 
-    function toggleCart() {
-        document.getElementById('cartPanel').classList.toggle('active');
+    function updatePriceDisp(id) {
+        const val = document.getElementById(`sel-${id}`).value;
+        document.getElementById(`pr-${id}`).innerText = val + " ৳";
     }
 
-    function sendToWhatsApp() {
-        if (cart.length === 0) return alert("কার্ট খালি!");
+    function changeSlide(id, step) { let idx = currentSlideIndices[id] + step; if(idx>2) idx=0; if(idx<0) idx=2; setSlide(id, idx); }
+    function setSlide(id, idx) { currentSlideIndices[id] = idx; document.getElementById(`slide-${id}`).style.transform = `translateX(-${idx * 33.333}%)`; const dots = document.getElementById(`dots-${id}`).querySelectorAll('.dot'); dots.forEach((d, i) => d.classList.toggle('active', i === idx)); }
 
-        let message = "*নতুন অর্ডার - পল্লীর স্বাদ*\n--------------------------\n";
-        let grandTotal = 0;
-
-        cart.forEach((item, index) => {
-            const subtotal = item.price * item.qty;
-            message += `${index + 1}. ${item.name}\n   পরিমাণ: ${item.qty} টি\n   মূল্য: ${subtotal} টাকা\n\n`;
-            grandTotal += subtotal;
-        });
-
-        message += `--------------------------\n*সর্বমোট মূল্য: ${grandTotal} টাকা*`;
+    function togglePaymentUI() {
+        const method = document.getElementById('paymentMethod').value;
+        const infoDiv = document.getElementById('paymentDetails');
+        const instruction = document.getElementById('paymentInstruction');
         
-        const encodedMsg = encodeURIComponent(message);
-        window.open(`https://wa.me/${whatsappNumber}?text=${encodedMsg}`, '_blank');
+        if(method !== 'Cash on Delivery') {
+            infoDiv.style.display = 'block';
+            instruction.innerHTML = `📢 ${method} নম্বর: <strong>${paymentNumbers[method]}</strong>`;
+        } else {
+            infoDiv.style.display = 'none';
+        }
+    }
+    
+    function handleAddToCart(id) {
+        const item = products.flatMap(g => g.items).find(i => i.id === id);
+        let name = item.name;
+        let price = item.price;
+        if(item.variants) {
+            const sel = document.getElementById(`sel-${id}`);
+            price = parseInt(sel.value);
+            name += ` (${sel.options[sel.selectedIndex].text.split(' - ')[0]})`;
+        }
+        const exist = cart.find(i => i.name === name);
+        if(exist) exist.qty++; else cart.push({name, price, qty: 1});
+        updateUI();
     }
 
-    window.onload = renderShop;
-</script>
+    function updateUI() {
+        const container = document.getElementById('cart-items-container');
+        const totalDiv = document.getElementById('cart-total');
+        const form = document.getElementById('checkoutForm');
+        document.getElementById('cart-count').innerText = cart.reduce((a, b) => a + b.qty, 0);
+        
+        if(cart.length === 0) { 
+            container.innerHTML = "কার্ট খালি।"; 
+            totalDiv.innerHTML = ""; 
+            form.style.display = "none"; 
+            return; 
+        }
+        
+        form.style.display = "block";
+        let total = 0;
+        container.innerHTML = cart.map((item, idx) => { 
+            total += item.price * item.qty; 
+            return `
+            <div class="cart-item">
+                <div>
+                    <div style="font-weight:600;">${item.name}</div>
+                    <div style="color:var(--accent); font-size:14px;">${item.price * item.qty} ৳</div>
+                </div>
+                <div class="qty-controls">
+                    <button class="qty-btn" onclick="updateQty(${idx}, -1)">-</button>
+                    <span>${item.qty}</span>
+                    <button class="qty-btn" onclick="updateQty(${idx}, 1)">+</button>
+                </div>
+            </div>`; 
+        }).join('');
+        totalDiv.innerHTML = `সর্বমোট: ${total} ৳`;
+    }
 
+    function updateQty(idx, change) {
+        cart[idx].qty += change;
+        if(cart[idx].qty <= 0) cart.splice(idx, 1);
+        updateUI();
+    }
+
+    function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
+
+    function sendWhatsApp() {
+        const name = document.getElementById('custName').value.trim();
+        const phone = document.getElementById('custPhone').value.trim();
+        const addr = document.getElementById('custAddress').value.trim();
+        const method = document.getElementById('paymentMethod').value;
+        
+        if(!name || !phone || !addr) return alert("দয়া করে নাম ও ঠিকানা পূরণ করুন।");
+        
+        let paymentTxt = `💳 পেমেন্ট: ${method}\n`;
+        if(method !== 'Cash on Delivery') {
+            const sender = document.getElementById('senderNo').value.trim();
+            const trx = document.getElementById('trxID').value.trim();
+            if(!sender || !trx) return alert("পেমেন্ট নম্বর এবং TrxID দিন।");
+            paymentTxt += `📱 প্রেরক নম্বর: ${sender}\n🆔 TrxID: ${trx}\n`;
+        }
+
+        let msg = `*নতুন অর্ডার - পল্লীর স্বাদ*\n━━━━━━━━━━━━━━\n👤 নাম: ${name}\n📞 ফোন: ${phone}\n📍 ঠিকানা: ${addr}\n${paymentTxt}\n*অর্ডার লিস্ট:*\n`;
+        cart.forEach((item, i) => {
+            msg += `${i+1}. ${item.name} - ${item.qty} টি (${item.price * item.qty} ৳)\n`;
+        });
+        msg += `\n*সর্বমোট মূল্য:* ${cart.reduce((a,b)=>a+(b.price*b.qty), 0)} টাকা`;
+        
+        window.open(`https://wa.me/${whatsappNo}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+    window.onload = init;
+</script>
 </body>
 </html>
