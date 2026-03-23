@@ -5,13 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>পল্লীর স্বাদ - অর্ডার প্যানেল</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #2d5a27; --accent: #e76f51; --bg: #fdfaf5; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
         body { background-color: var(--bg); color: #333; padding-bottom: 100px; }
-        header { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000') center/cover; color: white; text-align: center; padding: 50px 20px; }
+        
+        /* Navigation & Header */
+        header { 
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000') 
+                        center/cover; 
+            color: white; 
+            text-align: center; 
+            padding: 80px 20px 50px; /* Top padding for fixed nav */
+            position: relative;
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(45, 90, 39, 0.95);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .nav-logo { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .menu-toggle { font-size: 1.5rem; cursor: pointer; display: none; }
+
+        .nav-links { display: flex; gap: 20px; list-style: none; }
+        .nav-links a { text-decoration: none; color: white; font-weight: 600; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* Product & Content */
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .category-header { background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; margin: 30px 0 20px; font-size: 1.4rem; text-align: center; }
+        .category-header { background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; margin: 30px 0 20px; font-size: 1.4rem; text-align: center; scroll-margin-top: 70px; /* Offset for fixed nav */ }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         .card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border: 1px solid #eee; display: flex; flex-direction: column; position: relative; }
 
@@ -44,17 +79,69 @@
 
         .cart-btn-fixed { position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white; padding: 15px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; z-index: 1500; }
         .checkout-btn { background: #25D366; color: white; width: 100%; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+
+        /* Footer */
+        footer { background: #333; color: #ccc; text-align: center; padding: 30px 20px; margin-top: 50px; }
+        .fb-link { color: #3b5998; font-size: 2rem; text-decoration: none; transition: 0.3s; margin-top: 10px; display: inline-block; }
+        .fb-link:hover { transform: scale(1.1); color: #8b9dc3; }
+
+        /* About Section */
+        #about { background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 40px; }
+        #about h2 { color: var(--primary); margin-bottom: 15px; }
+        #about p { line-height: 1.6; color: #666; }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--primary);
+                flex-direction: column;
+                gap: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: 0.4s ease-in-out;
+            }
+            .nav-links.active { max-height: 500px; padding: 10px 0; }
+            .nav-links li { width: 100%; text-align: center; }
+            .nav-links a { display: block; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        }
+        
         @media (max-width: 400px) { .cart-panel { width: 100%; } }
     </style>
 </head>
 <body>
+
+<nav class="nav-bar">
+    <div class="nav-logo">
+        <i class="fas fa-store"></i> পল্লীর স্বাদ
+    </div>
+    <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#about" onclick="toggleMenu()">আমাদের সম্পর্কে</a></li>
+        <li><a href="#cat-1" onclick="toggleMenu()">গুড় ও মধু</a></li>
+        <li><a href="#cat-2" onclick="toggleMenu()"> তেল ও মসলা</a></li>
+        <li><a href="#cat-3" onclick="toggleMenu()">চাল ও আটা</a></li>
+        <li><a href="https://www.facebook.com/share/14aFtAxAVaM/" target="_blank"><i class="fab fa-facebook"></i> ফেসবুক পেজ</a></li>
+    </ul>
+</nav>
 
 <header>
     <h1>🛒 পল্লীর স্বাদ</h1>
     <p>প্রাকৃতিক খাদ্য ও মিষ্টির সমাহার</p>
 </header>
 
-<div class="container" id="main-shop"></div>
+<div class="container">
+    <div id="about">
+        <h2>আমাদের সম্পর্কে</h2>
+        <p>আমরা গ্রামবাংলার ঐতিহ্যবাহী, খাঁটি এবং ভেজালমুক্ত খাবার সরাসরি কৃষকের কাছ থেকে সংগ্রহ করে আপনার দরজায় পৌঁছে দিতে প্রতিশ্রুতিবদ্ধ। আমাদের লক্ষ্য হলো, স্বাস্থ্যের কথা মাথায় রেখে আপনাকে প্রকৃতির সেরা স্বাদ উপহার দেওয়া। খেজুরের গুড়, খাঁটি ঘি, মধু সহ নানাবিধ গ্রামীন পণ্যের জন্য বিশ্বস্ত ঠিকান।</p>
+    </div>
+    
+    <div id="main-shop"></div>
+</div>
 
 <div class="cart-btn-fixed" onclick="toggleCart()">🛒 কার্ট (<span id="cart-count">0</span>)</div>
 
@@ -85,6 +172,14 @@
     </div>
 </div>
 
+<footer>
+    <p>&copy; ২০২৪ পল্লীর স্বাদ। সর্বস্বত্ব সংরক্ষিত।</p>
+    <a href="https://www.facebook.com/share/14aFtAxAVaM/" target="_blank" class="fb-link">
+        <i class="fab fa-facebook-square"></i>
+    </a>
+    <p>আমাদের ফেসবুক পেজ ভিজিট করুন</p>
+</footer>
+
 <script>
     const whatsappNo = "8801580567606";
     const paymentNumbers = {
@@ -96,6 +191,7 @@
     const products = [
         {
             cat: "🍯 গুড় ও মধু",
+            catId: "cat-1",
             items: [
                 { id: 1, name: "খেজুরের গুড় (পাটালি)", price: 350, imgs: ["images/খেজুরের গুড় (পাটালি)1.jpg", "images/খেজুরের গুড় (পাটালি)2.jpg", "images/খেজুরের গুড় (পাটালি)3.jpg"] },
                 { id: 2, name: "ঝোলা গুড় (১ কেজি)", price: 350, imgs: ["images/ঝোলা গুড় (১ কেজি)1.jpg", "images/ঝোলা গুড় (১ কেজি)2.jpg", "images/ঝোলা গুড় (১ কেজি)3.jpg"] },
@@ -109,6 +205,7 @@
         },
         {
             cat: "🌿 তেল ও মসলা",
+            catId: "cat-2",
             items: [
                 { id: 9, name: "সরিষার তেল (১ কেজি)", price: 230, imgs: ["images/সরিষার তেল (১ কেজি)1.jpg", "images/সরিষার তেল (১ কেজি)2.jpg", "images/সরিষার তেল (১ কেজি)3.jpg"] },
                 { id: 10, name: "হলুদ গুড়া", variants: [{w: "১ কেজি", p: 480}, {w: "২৫০ গ্রাম", p: 120}], imgs: ["images/হলুদ গুড়া1.jpg", "images/হলুদ গুড়া2.jpg", "images/হলুদ গুড়া3.jpg"] },
@@ -118,6 +215,7 @@
         },
         {
             cat: "🍚 চাল ও আটা",
+            catId: "cat-3",
             items: [
                 { id: 13, name: "কালোজিরা পোলাও চাল (১ কেজি)", price: 180, imgs: ["images/কালোজিরা পোলাও চাল (১ কেজি)1.jpg", "images/কালোজিরা পোলাও চাল (১ কেজি)2.jpg", "images/কালোজিরা পোলাও চাল (১ কেজি)3.jpg"] },
                 { id: 14, name: "লাল আটা (১ কেজি)", price: 80, imgs: ["images/লাল আটা (১ কেজি)1.jpg", "images/লাল আটা (১ কেজি)2.jpg", "images/লাল আটা (১ কেজি)3.jpg"] }
@@ -128,10 +226,16 @@
     let cart = [];
     let currentSlideIndices = {};
 
+    function toggleMenu() {
+        if(window.innerWidth <= 768) {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+    }
+
     function init() {
         const shop = document.getElementById('main-shop');
         products.forEach((group) => {
-            let html = `<div class="category-header">${group.cat}</div><div class="product-grid">`;
+            let html = `<div class="category-header" id="${group.catId}">${group.cat}</div><div class="product-grid">`;
             group.items.forEach(item => {
                 currentSlideIndices[item.id] = 0;
                 let priceHtml = item.variants ? 
